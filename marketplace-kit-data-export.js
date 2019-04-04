@@ -48,6 +48,7 @@ program
   .version(version)
   .arguments('[environment]', 'name of the environment. Example: staging')
   .option('-p --path <export-file-path>', 'output for exported data', 'data.json')
+  .option('--export-internal-ids <export-internal-ids>', 'in export file use normal ids not the external_id', false)
   .option('-c --config-file <config-file>', 'config file path', '.marketplace-kit')
   .action((environment, params) => {
     process.env.CONFIG_FILE_PATH = params.configFile;
@@ -56,7 +57,7 @@ program
     gateway = new Gateway(authData);
     spinner.start();
     gateway
-      .dataExportStart()
+      .dataExportStart(exportInternalIds: params.exportInternalIds)
       .then(exportTask => {
         getExportStatus(exportTask.id).then(exportTask => {
           fs.writeFileSync(`tmp/${filename}`, JSON.stringify(exportTask.data));
